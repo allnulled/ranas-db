@@ -1,6 +1,6 @@
 {
   "name": "ranas-db",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Easy browser-side database management for IndexedDB.",
   "main": "distribucion/ranas-db.js",
   "scripts": {

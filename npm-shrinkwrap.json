@@ -1,12 +1,12 @@
 {
   "name": "ranas-db",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "ranas-db",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "license": "NoLicense",
       "dependencies": {
         "@allnulled/check-that": "^0.0.1",
