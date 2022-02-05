@@ -1,0 +1,1 @@
+throw new Error("No hay interfaz de RanasDB para Node.js por ahora.");
