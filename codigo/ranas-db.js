@@ -11,11 +11,17 @@ console.log("[*] Cargando RanasDB...");
 
 class RanasDB {
 
-    static Dexie = Dexie;
+    static get Dexie() {
+        return Dexie;
+    }
 
-    static DexieRelationships = DexieRelationships;
+    static get DexieRelationships() {
+        return DexieRelationships;
+    }
 
-    static Check = Check;
+    static get Check() {
+        return Check;
+    }
 
     static create(id, versionation, options, schema) {
         return new RanasDB(id, versionation, options, schema);
@@ -26,17 +32,19 @@ class RanasDB {
         return db.initialize();
     }
 
-    static dropDatabase = function(id) {
+    static dropDatabase(id) {
         return RanasDB.Dexie.delete(id);
     };
 
-    static dropDatabaseIfExists = function(id) {
+    static dropDatabaseIfExists(id) {
         try {
             return RanasDB.Dexie.delete(id);
         } catch (error) {}
     };
 
-    static defaultOptions = defaultOptions;
+    static get defaultOptions() {
+        return defaultOptions;
+    }
 
     constructor(id = "Base_de_datos_por_defecto_de_ranas_db", versionation = [], options = this.constructor.defaultOptions, schema = {}) {
         Check.that(id).isString();
