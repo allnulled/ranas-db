@@ -10,6 +10,7 @@
     "browse": "http-server testeo/estatico -c-1",
     "test": "mocha testeo/*.test.js"
   },
+  "browser": "./codigo/ranas-db.js",
   "keywords": [],
   "author": "allnulled",
   "license": "NoLicense",

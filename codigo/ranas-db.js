@@ -74,10 +74,10 @@ class RanasDB {
         this.debug(`Selecting on: #${this.databaseID} » ${table}`, {table, filter, joins});
         Check.that(table).isString();
         Check.that(filter).isFunction();
-        const collection = this.dexieDB.table(table).filter(filter);
+        let collection = this.dexieDB.table(table).filter(filter);
         for(let index = 0; index < joins.length; index++) {
             let join = joins[index];
-            collection.with({ [join]: join })
+            collection = collection.with({ [join]: join })
         }
         return collection.toArray();
     }
