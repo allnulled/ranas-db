@@ -7,10 +7,17 @@ QUnit.module("RanasDB Test", function() {
             try {
                 const done = assert.async();
                 await RanasDB.Dexie.delete("BD_001");
-                commonData.db = RanasDB.create("BD_001", [{
-                    Sistema_de_ficheros: "++id, &subruta, tipo, padre -> Sistema_de_ficheros.id",
-                    Sistema_de_hooks: "++id, hook, prioridad, configuraciones, contenido, publicador, autor, fecha, descripcion, url, detalles",
-                }]);
+                commonData.db = RanasDB.create("BD_001", [
+                    [
+                        {
+                            Sistema_de_ficheros: "++id, &subruta, tipo, padre -> Sistema_de_ficheros.id",
+                            Sistema_de_hooks: "++id, hook, prioridad, configuraciones, contenido, publicador, autor, fecha, descripcion, url, detalles",
+                        }, function() {
+                            console.log("Upgrade to version 1 of BD_001");
+                            return undefined;
+                        }
+                    ]
+                ]);
                 await commonData.db.initialize();
                 assert.ok(true, "Preparacion de tests correcta");
                 done();
@@ -108,15 +115,21 @@ QUnit.module("RanasDB Test", function() {
             try {
                 const done = assert.async();
                 await RanasDB.Dexie.delete("My_first_database");
-                const db = RanasDB.create("My_first_database", [{
-                    users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
-                    groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
-                    permissions: "++id,&name,description,details,tags,created_at,updated_at",
-                }, {
-                    permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
-                    permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
-                    groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
-                }]);
+                const db = RanasDB.create("My_first_database", [
+                    [
+                        {
+                            users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
+                            groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
+                            permissions: "++id,&name,description,details,tags,created_at,updated_at",
+                        }, function() {}
+                    ], [
+                        {
+                            permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
+                            permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
+                            groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
+                        }, function() {}
+                    ]
+                ]);
                 await db.initialize();
                 const userId1 = await db.insert("users", { name: "user1", password: "x", email: "user1@domain.com", });
                 const userId2 = await db.insert("users", { name: "user2", password: "x", email: "user2@domain.com", });
@@ -149,15 +162,21 @@ QUnit.module("RanasDB Test", function() {
                     setTimeout(() => ok(), 1000 * 3);
                 });
                 await RanasDB.dropDatabaseIfExists("My_first_database");
-                const db = await RanasDB.connect("My_first_database", [{
-                    users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
-                    groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
-                    permissions: "++id,&name,description,details,tags,created_at,updated_at",
-                },{
-                    permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
-                    permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
-                    groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
-                }], {
+                const db = await RanasDB.connect("My_first_database", [
+                    [
+                        {
+                            users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
+                            groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
+                            permissions: "++id,&name,description,details,tags,created_at,updated_at",
+                        }, function() {}
+                    ],[
+                        {
+                            permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
+                            permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
+                            groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
+                        }, function() {}
+                    ]
+                ], {
                     debug: console.log // this is for debugging CRUD methods by console
                 });
                 const userXId = await db.insert("users", { name: "userX", password: "x", email: "userx@domain.com" });
@@ -184,7 +203,7 @@ QUnit.module("RanasDB Test", function() {
     (async () => {
         for(let index = 0; index < testsFns.length; index++) {
             let testFn = testsFns[index];
-            testFn();
+            await testFn();
             // await new Promise((ok, fail) => { setTimeout(ok, 1000) });
         }
     })();

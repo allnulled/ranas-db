@@ -7,7 +7,7 @@ module.exports = function() {
             path.resolve(process.cwd(), "construccion", "**/*.js"),
         ];
         require("chokidar").watch(pathToFiles).on("change", function(event, file) {
-            require(__dirname + "/construir.js")().then(() => console.log("Re-construido codigo..."));
+            require(__dirname + "/construir.js")().then(() => console.log("OK: ¡El código fue reconstruído con éxito!"));
         });
     });
 };

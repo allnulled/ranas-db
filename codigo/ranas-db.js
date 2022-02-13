@@ -48,10 +48,12 @@ class RanasDB {
 
     constructor(id = "Base_de_datos_por_defecto_de_ranas_db", versionation = [], options = this.constructor.defaultOptions, schema = {}) {
         Check.that(id).isString();
-        Check.that(versionation).isArray().hasLengthGreaterThan(-1);
+        Check.that(versionation).isArray();
         for(let index = 0; index < versionation.length; index++) {
             const version = versionation[index];
-            Check.that(version).isObject();
+            Check.that(version).isArray().hasLengthGreaterThan(1);
+            Check.that(version[0]).isObject();
+            Check.that(version[1]).isFunction();
         }
         this.options = options;
         this.databaseID = id;
@@ -71,8 +73,11 @@ class RanasDB {
         this.debug(`Initializing: #${this.databaseID}`);
         if(!this.dexieDB.isOpen()) {
             for(let index = 0; index < this.versionation.length; index++) {
-                const version = this.versionation[index];
-                this.dexieDB.version(index + 1).stores(version);
+                const [store, upgrade] = this.versionation[index];
+                const storeVersion = this.dexieDB.version(index + 1).stores(store);
+                if(upgrade) {
+                    storeVersion.upgrade(upgrade);
+                }
             }
         }
         return this;

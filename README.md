@@ -22,15 +22,23 @@ const RanasDB = require("ranas-db");
 await RanasDB.dropDatabaseIfExists("My_first_database");
 
 // 3. Connect (= create + initialize) to your database, and define all versions:
-const db = await RanasDB.connect("My_first_database", [{
-    users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
-    groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
-    permissions: "++id,&name,description,details,tags,created_at,updated_at",
-},{
-    permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
-    permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
-    groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
-}], {
+const db = await RanasDB.connect("My_first_database", [
+    [
+        {
+            users: "++id,&name,password,&email,created_at,updated_at,picture_profile,personal_data,description",
+            groups: "++id,&name,administrator,description,details,tags,created_at,updated_at",
+            permissions: "++id,&name,description,details,tags,created_at,updated_at",
+        },
+        function() {}
+    ], [
+        {
+            permissions_of_user: "++id,id_user -> users.id,id_permission -> permissions.id",
+            permissions_of_group: "++id,id_group -> groups.id,id_permission -> permissions.id",
+            groups_of_user: "++id,id_user -> users.id,id_group -> groups.id",
+        },
+        function() {}
+    ]
+], {
     debug: console.log // this is for debugging CRUD methods by console
 });
 
@@ -57,8 +65,12 @@ if(allUsers.length !== 2) {
 
 # Why?
 
-To make `IndexedDB` work, easier.
+To make `IndexedDB` work, easier (so, `dexie`), with references (that is, `dexie-relationships`), and a simple but flexible enough API.
 
 # License
 
 No. **#NoLicense**.
+
+# Changes
+
+See changes on CHANGELOG.md file.
